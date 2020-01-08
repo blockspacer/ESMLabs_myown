@@ -1,0 +1,17 @@
+COMPILE_OPTS =          $(INCLUDES) -m64  -fPIC -I$(WORKING_DIR)/3rdparty/openssl/v1_1_1d/include -I. -O2 -DSOCKLEN_T=socklen_t -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
+C =                     c
+C_COMPILER =            $(CC)
+C_FLAGS =               $(COMPILE_OPTS)
+CPP =                   cpp
+CPLUSPLUS_COMPILER =    $(CXX)
+CPLUSPLUS_FLAGS =       $(COMPILE_OPTS) -Wall -DBSD=1 -Wl,-rpath,$(WORKING_DIR)/3rdparty/openssl/v1_1_1d/lib
+OBJ =                   o
+LINK =                  $(CXX) -o
+LINK_OPTS =             -L.
+CONSOLE_LINK_OPTS =     $(LINK_OPTS), 
+LIBRARY_LINK =          $(AR) cr 
+LIBRARY_LINK_OPTS = 
+LIB_SUFFIX =                    a
+LIBS_FOR_CONSOLE_APPLICATION = -lssl -lcrypto
+LIBS_FOR_GUI_APPLICATION =
+EXE =
