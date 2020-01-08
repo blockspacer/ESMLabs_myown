@@ -1,0 +1,26 @@
+
+
+#compiled object files
+*.slo
+*.lo
+*.o
+*.obj
+
+#precompiled header
+*.gch
+*.pch
+
+#compiled libraries
+*.so
+*.dylib
+*.dll
+
+#compiled static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+3rdparty/**
+build/**
+platform/**

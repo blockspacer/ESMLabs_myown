@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.0)
+project(Magnetar.AI)
+set(CMAKE_MAJOR_VERSION 0)
+set(CMAKE_MINOR_VERSION 1)
+#set(CMAKE_CXX_STANDARD 11)
+#set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_C_COMPILER "/usr/bin/clang")
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--strip-all")
+#set(CMAKE_EXE_LINKER_FLAGS "--strip-unneeded")
+
+add_subdirectory(lib/container/ff/muxer)
+add_subdirectory(lib/net/rtsp/client)
+add_subdirectory(apps/eval/nvr)
+
