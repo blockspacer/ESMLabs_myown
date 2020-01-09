@@ -1,11 +1,11 @@
-#if !defined(_BUFFER_SINK_H_)
+#ifndef _BUFFER_SINK_H_
 #define _BUFFER_SINK_H_
 
 #include <MediaSink.hh>
 #include <UsageEnvironment.hh>
-#include "mgnt_rtsp_client.h"
+#include "esm_rtsp_client.h"
 
-namespace magnetar
+namespace esmlabs
 {
 	namespace lib
 	{
@@ -16,12 +16,12 @@ namespace magnetar
 				class client::buffer_sink : public MediaSink
 				{
 				public:
-					static magnetar::lib::net::rtsp::client::buffer_sink * createNew(magnetar::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size);
+					static esmlabs::lib::net::rtsp::client::buffer_sink * createNew(esmlabs::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size);
 
 					virtual void add_data(unsigned char * data, unsigned size, struct timeval presentation_time, unsigned duration_msec);
 
 				protected:
-					buffer_sink(magnetar::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size);
+					buffer_sink(esmlabs::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size);
 					virtual ~buffer_sink(void);
 
 				protected: //redefined virtual functions
@@ -32,7 +32,7 @@ namespace magnetar
 					virtual void after_getting_frame(unsigned frame_size, unsigned truncated_bytes, struct timeval presentation_time, unsigned duration_msec);
 
 
-					magnetar::lib::net::rtsp::client * _front;
+					esmlabs::lib::net::rtsp::client * _front;
 					unsigned char *	_buffer;
 					unsigned		_buffer_size;
 

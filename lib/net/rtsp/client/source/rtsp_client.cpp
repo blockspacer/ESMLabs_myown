@@ -1,5 +1,5 @@
 #include "rtsp_client.h"
-#include "mgnt_rtsp_client.h"
+#include "esm_rtsp_client.h"
 #include "h264_buffer_sink.h"
 #include "h265_buffer_sink.h"
 #include "aac_buffer_sink.h"
@@ -7,13 +7,13 @@
 #include <cstdio>
 #include <cstring>
 
-magnetar::lib::net::rtsp::client::core * magnetar::lib::net::rtsp::client::core::createNew(magnetar::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag)
+esmlabs::lib::net::rtsp::client::core * esmlabs::lib::net::rtsp::client::core::createNew(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag)
 {
-	return new magnetar::lib::net::rtsp::client::core(front, env, url, username, password, transport_option, recv_option, recv_timeout, scale, http_port_number, kill_flag);
+	return new esmlabs::lib::net::rtsp::client::core(front, env, url, username, password, transport_option, recv_option, recv_timeout, scale, http_port_number, kill_flag);
 }
 
-magnetar::lib::net::rtsp::client::core::core(magnetar::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag)
-	: RTSPClient(env, url, 1, "magnetar::lib::net::rtsp::client", http_port_number, -1)
+esmlabs::lib::net::rtsp::client::core::core(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag)
+	: RTSPClient(env, url, 1, "esmlabs::lib::net::rtsp::client", http_port_number, -1)
 	, _front(front)
 	, _kill_flag(kill_flag)
 	, _kill_trigger(0)
@@ -44,13 +44,13 @@ magnetar::lib::net::rtsp::client::core::core(magnetar::lib::net::rtsp::client * 
     _transport_option = transport_option;
     _recv_option = recv_option;
 
-	_kill_trigger = envir().taskScheduler().createEventTrigger((TaskFunc*)&(magnetar::lib::net::rtsp::client::core::kill_trigger));
+	_kill_trigger = envir().taskScheduler().createEventTrigger((TaskFunc*)&(esmlabs::lib::net::rtsp::client::core::kill_trigger));
 	//_task_sched = &_env->taskScheduler();
 	if (username && password && strlen(username)>0 && strlen(password)>0)
         _auth = new Authenticator(username, password);
 }
 
-magnetar::lib::net::rtsp::client::core::~core(void)
+esmlabs::lib::net::rtsp::client::core::~core(void)
 {
 	if (_auth)
 	{
@@ -59,63 +59,63 @@ magnetar::lib::net::rtsp::client::core::~core(void)
 	}
 }
 
-void magnetar::lib::net::rtsp::client::core::get_options(RTSPClient::responseHandler * after_func)
+void esmlabs::lib::net::rtsp::client::core::get_options(RTSPClient::responseHandler * after_func)
 {
     sendOptionsCommand(after_func, _auth);
 }
 
-void magnetar::lib::net::rtsp::client::core::get_description(RTSPClient::responseHandler * after_func)
+void esmlabs::lib::net::rtsp::client::core::get_description(RTSPClient::responseHandler * after_func)
 {
     sendDescribeCommand(after_func, _auth);
 }
 
-void magnetar::lib::net::rtsp::client::core::setup_media_subsession(MediaSubsession * media_subsession, bool rtp_over_tcp, bool force_multicast_unspecified, RTSPClient::responseHandler * after_func)
+void esmlabs::lib::net::rtsp::client::core::setup_media_subsession(MediaSubsession * media_subsession, bool rtp_over_tcp, bool force_multicast_unspecified, RTSPClient::responseHandler * after_func)
 {
     sendSetupCommand(*media_subsession, after_func, False, rtp_over_tcp?True:False, force_multicast_unspecified?True:False, _auth);
 }
 
-void magnetar::lib::net::rtsp::client::core::start_playing_session(MediaSession * media_session, double start, double end, float scale, RTSPClient::responseHandler * after_func)
+void esmlabs::lib::net::rtsp::client::core::start_playing_session(MediaSession * media_session, double start, double end, float scale, RTSPClient::responseHandler * after_func)
 {
     sendPlayCommand(*media_session, after_func, start, end, scale, _auth);
 }
 
-void magnetar::lib::net::rtsp::client::core::start_playing_session(MediaSession * media_session, const char * abs_start_time, const char * abs_end_time, float scale, RTSPClient::responseHandler * after_func)
+void esmlabs::lib::net::rtsp::client::core::start_playing_session(MediaSession * media_session, const char * abs_start_time, const char * abs_end_time, float scale, RTSPClient::responseHandler * after_func)
 {
     sendPlayCommand(*media_session, after_func, abs_start_time, abs_end_time, scale, _auth);
 }
 
-void magnetar::lib::net::rtsp::client::core::start_pausing_session(void)
+void esmlabs::lib::net::rtsp::client::core::start_pausing_session(void)
 {
 	sendPauseCommand(*_media_session, continue_after_pause, _auth);
 }
 
-void magnetar::lib::net::rtsp::client::core::teardown_session(MediaSession * media_session, RTSPClient::responseHandler * after_func)
+void esmlabs::lib::net::rtsp::client::core::teardown_session(MediaSession * media_session, RTSPClient::responseHandler * after_func)
 {
     sendTeardownCommand(*media_session, after_func, _auth);
 }
 
-void magnetar::lib::net::rtsp::client::core::set_user_agent_string(const char * user_agent)
+void esmlabs::lib::net::rtsp::client::core::set_user_agent_string(const char * user_agent)
 {
     setUserAgentString(user_agent);
 }
 
-void magnetar::lib::net::rtsp::client::core::continue_after_client_creation(RTSPClient * param)
+void esmlabs::lib::net::rtsp::client::core::continue_after_client_creation(RTSPClient * param)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
-    self->set_user_agent_string("Magnetar.AI RTSP Client");
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
+    self->set_user_agent_string("esmlabs.AI RTSP Client");
     self->get_options(continue_after_options);
 }
 
-void magnetar::lib::net::rtsp::client::core::continue_after_options(RTSPClient * param, int result_code, char * result_string)
+void esmlabs::lib::net::rtsp::client::core::continue_after_options(RTSPClient * param, int result_code, char * result_string)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
     delete [] result_string;
     self->get_description(continue_after_describe);
 }
 
-void magnetar::lib::net::rtsp::client::core::continue_after_describe(RTSPClient * param, int result_code, char * result_string)
+void esmlabs::lib::net::rtsp::client::core::continue_after_describe(RTSPClient * param, int result_code, char * result_string)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
 
 	do
 	{
@@ -140,12 +140,12 @@ void magnetar::lib::net::rtsp::client::core::continue_after_describe(RTSPClient 
 		bool made_progress = false;
 		while ((media_subsession = iter.next()) != 0)
 		{
-			if ((self->_recv_option & magnetar::lib::net::rtsp::client::media_type_t::audio) && !(self->_recv_option & magnetar::lib::net::rtsp::client::media_type_t::video))
+			if ((self->_recv_option & esmlabs::lib::net::rtsp::client::media_type_t::audio) && !(self->_recv_option & esmlabs::lib::net::rtsp::client::media_type_t::video))
 			{
 				if (strcmp(media_subsession->mediumName(), "audio")!=0)
 					continue;
 			}
-			if ((self->_recv_option & magnetar::lib::net::rtsp::client::media_type_t::video) && !(self->_recv_option & magnetar::lib::net::rtsp::client::media_type_t::audio))
+			if ((self->_recv_option & esmlabs::lib::net::rtsp::client::media_type_t::video) && !(self->_recv_option & esmlabs::lib::net::rtsp::client::media_type_t::audio))
 			{
 				if (strcmp(media_subsession->mediumName(), "video") != 0)
 					continue;
@@ -181,9 +181,9 @@ void magnetar::lib::net::rtsp::client::core::continue_after_describe(RTSPClient 
 #endif
 }
 
-void magnetar::lib::net::rtsp::client::core::continue_after_setup(RTSPClient * param, int result_code, char * result_string)
+void esmlabs::lib::net::rtsp::client::core::continue_after_setup(RTSPClient * param, int result_code, char * result_string)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
 
     if( result_code==0 )
         self->_made_progress = true;
@@ -194,9 +194,9 @@ void magnetar::lib::net::rtsp::client::core::continue_after_setup(RTSPClient * p
     self->setup_streams();
 }
 
-void magnetar::lib::net::rtsp::client::core::continue_after_play(RTSPClient * param, int result_code, char * result_string)
+void esmlabs::lib::net::rtsp::client::core::continue_after_play(RTSPClient * param, int result_code, char * result_string)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
 
 	do
 	{
@@ -242,14 +242,14 @@ void magnetar::lib::net::rtsp::client::core::continue_after_play(RTSPClient * pa
 #endif
 }
 
-void magnetar::lib::net::rtsp::client::core::continue_after_pause(RTSPClient * param, int result_code, char * result_string)
+void esmlabs::lib::net::rtsp::client::core::continue_after_pause(RTSPClient * param, int result_code, char * result_string)
 {
 
 }
 
-void magnetar::lib::net::rtsp::client::core::continue_after_teardown(RTSPClient * param, int result_code, char * result_string)
+void esmlabs::lib::net::rtsp::client::core::continue_after_teardown(RTSPClient * param, int result_code, char * result_string)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
 
     if( result_string )
         delete [] result_string;
@@ -271,16 +271,16 @@ void magnetar::lib::net::rtsp::client::core::continue_after_teardown(RTSPClient 
 	self->close();
 }
 
-void magnetar::lib::net::rtsp::client::core::close(void)
+void esmlabs::lib::net::rtsp::client::core::close(void)
 {
 	//envir().taskScheduler();
 	envir().taskScheduler().triggerEvent(_kill_trigger, this);
 }
 
-void magnetar::lib::net::rtsp::client::core::subsession_after_playing(void * param)
+void esmlabs::lib::net::rtsp::client::core::subsession_after_playing(void * param)
 {
 	MediaSubsession * media_subsession = static_cast<MediaSubsession*>(param);
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(media_subsession->miscPtr);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(media_subsession->miscPtr);
 
     Medium::close( media_subsession->sink );
     media_subsession->sink = 0;
@@ -295,10 +295,10 @@ void magnetar::lib::net::rtsp::client::core::subsession_after_playing(void * par
 	self->session_after_playing(self);
 }
 
-void magnetar::lib::net::rtsp::client::core::subsession_bye_handler(void * param)
+void esmlabs::lib::net::rtsp::client::core::subsession_bye_handler(void * param)
 {
 	MediaSubsession * media_subsession = static_cast<MediaSubsession*>(param);
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(media_subsession->miscPtr);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(media_subsession->miscPtr);
 
     //struct timeval time_now;
     //gettimeofday( &time_now, 0 );
@@ -306,9 +306,9 @@ void magnetar::lib::net::rtsp::client::core::subsession_bye_handler(void * param
 	self->subsession_after_playing(media_subsession);
 }
 
-void magnetar::lib::net::rtsp::client::core::session_after_playing(void * param)
+void esmlabs::lib::net::rtsp::client::core::session_after_playing(void * param)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
 #if 0
 	self->shutdown();
 #else
@@ -316,7 +316,7 @@ void magnetar::lib::net::rtsp::client::core::session_after_playing(void * param)
 #endif
 }
 
-void magnetar::lib::net::rtsp::client::core::setup_streams(void)
+void esmlabs::lib::net::rtsp::client::core::setup_streams(void)
 {
 	//static MediaSubsessionIterator * iter = new MediaSubsessionIterator(*_media_session);
 	if (!_iter)
@@ -326,10 +326,10 @@ void magnetar::lib::net::rtsp::client::core::setup_streams(void)
     {
         if( media_subsession->clientPortNum()==0 )
             continue;
-        if(_transport_option== magnetar::lib::net::rtsp::client::transport_option_t::rtp_over_tcp)
-			setup_media_subsession(media_subsession, true, false, magnetar::lib::net::rtsp::client::core::continue_after_setup);
+        if(_transport_option== esmlabs::lib::net::rtsp::client::transport_option_t::rtp_over_tcp)
+			setup_media_subsession(media_subsession, true, false, esmlabs::lib::net::rtsp::client::core::continue_after_setup);
         else
-			setup_media_subsession(media_subsession, false, false, magnetar::lib::net::rtsp::client::core::continue_after_setup);
+			setup_media_subsession(media_subsession, false, false, esmlabs::lib::net::rtsp::client::core::continue_after_setup);
 
 		return;
     }
@@ -353,7 +353,7 @@ void magnetar::lib::net::rtsp::client::core::setup_streams(void)
 		if(media_subsession->readSource()==0) // was not initiated
 			continue;
 
-		magnetar::lib::net::rtsp::client::buffer_sink * bs = nullptr;
+		esmlabs::lib::net::rtsp::client::buffer_sink * bs = nullptr;
 		if (!strcmp(media_subsession->mediumName(), "video"))
 		{
 			if(!strcmp(media_subsession->codecName(), "H265"))
@@ -444,7 +444,7 @@ void magnetar::lib::net::rtsp::client::core::setup_streams(void)
         start_playing_session( _media_session, _init_seek_time, _end_time, _scale, continue_after_play );
 }
 
-void magnetar::lib::net::rtsp::client::core::shutdown(void)
+void esmlabs::lib::net::rtsp::client::core::shutdown(void)
 {
     if( _shutting_down )
         return;
@@ -472,23 +472,23 @@ void magnetar::lib::net::rtsp::client::core::shutdown(void)
         continue_after_teardown( this, 0, 0 );
 }
 
-void magnetar::lib::net::rtsp::client::core::session_timer_handler(void * param)
+void esmlabs::lib::net::rtsp::client::core::session_timer_handler(void * param)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
     self->_session_timer_task = 0;
 	self->session_after_playing(self);
 }
 
-void magnetar::lib::net::rtsp::client::core::check_packet_arrival(void * param)
+void esmlabs::lib::net::rtsp::client::core::check_packet_arrival(void * param)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
     int delay_usec = 100000; //100 ms
-	self->_arrival_check_timer_task = self->envir().taskScheduler().scheduleDelayedTask(delay_usec, (TaskFunc*)&magnetar::lib::net::rtsp::client::core::check_packet_arrival, self);
+	self->_arrival_check_timer_task = self->envir().taskScheduler().scheduleDelayedTask(delay_usec, (TaskFunc*)&esmlabs::lib::net::rtsp::client::core::check_packet_arrival, self);
 }
 
-void magnetar::lib::net::rtsp::client::core::check_inter_packet_gaps(void * param)
+void esmlabs::lib::net::rtsp::client::core::check_inter_packet_gaps(void * param)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
     if( !self->_inter_packet_gap_max_time )
         return;
 
@@ -513,13 +513,13 @@ void magnetar::lib::net::rtsp::client::core::check_inter_packet_gaps(void * para
     else
     {
         self->_total_packets_received = total_packets_received;
-		self->_inter_packet_gap_check_timer_task = self->envir().taskScheduler().scheduleDelayedTask(self->_inter_packet_gap_max_time * 1000000, (TaskFunc*)&magnetar::lib::net::rtsp::client::core::check_inter_packet_gaps, self);
+		self->_inter_packet_gap_check_timer_task = self->envir().taskScheduler().scheduleDelayedTask(self->_inter_packet_gap_max_time * 1000000, (TaskFunc*)&esmlabs::lib::net::rtsp::client::core::check_inter_packet_gaps, self);
     }
 }
 
-void magnetar::lib::net::rtsp::client::core::check_session_timeout_broken_server(void * param)
+void esmlabs::lib::net::rtsp::client::core::check_session_timeout_broken_server(void * param)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
     if( !self->_send_keepalives_to_broken_servers )
         return;
 
@@ -530,12 +530,12 @@ void magnetar::lib::net::rtsp::client::core::check_session_timeout_broken_server
     unsigned delay_sec_until_next_keepalive = session_timeout<=5?1:session_timeout-5;
     //reduce the interval a liteel, to be on the safe side
 
-	self->_session_timeout_broken_server_task = self->envir().taskScheduler().scheduleDelayedTask(delay_sec_until_next_keepalive * 1000000, (TaskFunc*)&magnetar::lib::net::rtsp::client::core::check_session_timeout_broken_server, self);
+	self->_session_timeout_broken_server_task = self->envir().taskScheduler().scheduleDelayedTask(delay_sec_until_next_keepalive * 1000000, (TaskFunc*)&esmlabs::lib::net::rtsp::client::core::check_session_timeout_broken_server, self);
 }
 
-void magnetar::lib::net::rtsp::client::core::kill_trigger(void * param)
+void esmlabs::lib::net::rtsp::client::core::kill_trigger(void * param)
 {
-	magnetar::lib::net::rtsp::client::core * self = static_cast<magnetar::lib::net::rtsp::client::core*>(param);
+	esmlabs::lib::net::rtsp::client::core * self = static_cast<esmlabs::lib::net::rtsp::client::core*>(param);
 	self->_shutting_down = false;
 	self->shutdown();
 

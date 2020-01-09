@@ -1,9 +1,9 @@
-#ifndef _MAGNETAR_LOCKS_H_
-#define _MAGNETAR_LOCKS_H_
+#ifndef _ESMLABS_LOCKS_H_
+#define _ESMLABS_LOCKS_H_
 
 #include <pthread.h>
 
-namespace magnetar
+namespace esmlabs
 {
     namespace locks
     {

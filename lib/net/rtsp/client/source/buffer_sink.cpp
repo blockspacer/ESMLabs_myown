@@ -1,7 +1,7 @@
 #include "buffer_sink.h"
 #include <GroupsockHelper.hh>
 
-magnetar::lib::net::rtsp::client::buffer_sink::buffer_sink(magnetar::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size)
+esmlabs::lib::net::rtsp::client::buffer_sink::buffer_sink(esmlabs::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size)
     : MediaSink(env)
 	, _front(front)
     , _buffer_size(buffer_size)
@@ -12,9 +12,9 @@ magnetar::lib::net::rtsp::client::buffer_sink::buffer_sink(magnetar::lib::net::r
 	, _recv_first_idr(false)
 	, _recv_first_audio(false)
 {
-	if (_mt == magnetar::lib::net::rtsp::client::media_type_t::video)
+	if (_mt == esmlabs::lib::net::rtsp::client::media_type_t::video)
 		_vcodec = codec;
-	if (_mt == magnetar::lib::net::rtsp::client::media_type_t::audio)
+	if (_mt == esmlabs::lib::net::rtsp::client::media_type_t::audio)
 		_acodec = codec;
 
     _buffer = new unsigned char[buffer_size];
@@ -24,7 +24,7 @@ magnetar::lib::net::rtsp::client::buffer_sink::buffer_sink(magnetar::lib::net::r
 	_start_time = 0;
 }
 
-magnetar::lib::net::rtsp::client::buffer_sink::~buffer_sink(void)
+esmlabs::lib::net::rtsp::client::buffer_sink::~buffer_sink(void)
 {
 	if (_buffer)
 	{
@@ -33,12 +33,12 @@ magnetar::lib::net::rtsp::client::buffer_sink::~buffer_sink(void)
 	}
 }
 
-magnetar::lib::net::rtsp::client::buffer_sink* magnetar::lib::net::rtsp::client::buffer_sink::createNew(magnetar::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size)
+esmlabs::lib::net::rtsp::client::buffer_sink* esmlabs::lib::net::rtsp::client::buffer_sink::createNew(esmlabs::lib::net::rtsp::client * front, int32_t mt, int32_t codec, UsageEnvironment & env, unsigned buffer_size)
 {
 	return new buffer_sink(front, mt, codec, env, buffer_size);
 }
 
-Boolean magnetar::lib::net::rtsp::client::buffer_sink::continuePlaying(void)
+Boolean esmlabs::lib::net::rtsp::client::buffer_sink::continuePlaying(void)
 {
     if( !fSource )
         return False;
@@ -47,13 +47,13 @@ Boolean magnetar::lib::net::rtsp::client::buffer_sink::continuePlaying(void)
     return True;
 }
 
-void magnetar::lib::net::rtsp::client::buffer_sink::after_getting_frame(void * param, unsigned frame_size, unsigned truncated_bytes, struct timeval presentation_time, unsigned duration_msec)
+void esmlabs::lib::net::rtsp::client::buffer_sink::after_getting_frame(void * param, unsigned frame_size, unsigned truncated_bytes, struct timeval presentation_time, unsigned duration_msec)
 {
-	magnetar::lib::net::rtsp::client::buffer_sink * sink = static_cast<magnetar::lib::net::rtsp::client::buffer_sink*>(param);
+	esmlabs::lib::net::rtsp::client::buffer_sink * sink = static_cast<esmlabs::lib::net::rtsp::client::buffer_sink*>(param);
 	sink->after_getting_frame(frame_size, truncated_bytes, presentation_time, duration_msec);
 }
 
-void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * data, unsigned data_size, struct timeval presentation_time, unsigned duration_msec)
+void esmlabs::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * data, unsigned data_size, struct timeval presentation_time, unsigned duration_msec)
 {
 	long long pts = 0;
 	if (!_start_time)
@@ -68,16 +68,16 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 	
 	if(_front)
 	{
-		if (_mt == magnetar::lib::net::rtsp::client::media_type_t::video)
+		if (_mt == esmlabs::lib::net::rtsp::client::media_type_t::video)
 		{
-			if (_vcodec == magnetar::lib::net::rtsp::client::video_codec_type_t::avc)
+			if (_vcodec == esmlabs::lib::net::rtsp::client::video_codec_type_t::avc)
 			{
 				int32_t saved_sps_size = 0;
 				unsigned char * saved_sps = _front->get_sps(saved_sps_size);
 				int32_t saved_pps_size = 0;
 				unsigned char * saved_pps = _front->get_pps(saved_pps_size);
 
-				bool is_sps = magnetar::lib::net::rtsp::client::is_sps(_vcodec, data[4] & 0x1F);
+				bool is_sps = esmlabs::lib::net::rtsp::client::is_sps(_vcodec, data[4] & 0x1F);
 				if (is_sps)
 				{
 					if (saved_sps_size < 1 || !saved_sps)
@@ -97,7 +97,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 					}
 				}
 
-				bool is_pps = magnetar::lib::net::rtsp::client::is_pps(_vcodec, data[4] & 0x1F);
+				bool is_pps = esmlabs::lib::net::rtsp::client::is_pps(_vcodec, data[4] & 0x1F);
 				if (is_pps)
 				{
 					if (saved_pps_size < 1 || !saved_pps)
@@ -117,7 +117,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 					}
 				}
 
-				bool is_idr = magnetar::lib::net::rtsp::client::is_idr(_vcodec, data[4] & 0x1F);
+				bool is_idr = esmlabs::lib::net::rtsp::client::is_idr(_vcodec, data[4] & 0x1F);
 				if (_change_sps || _change_pps)
 				{
 					if (is_idr && !_recv_first_idr)
@@ -158,7 +158,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 				}
 				*/
 			}
-			else if (_vcodec == magnetar::lib::net::rtsp::client::video_codec_type_t::hevc)
+			else if (_vcodec == esmlabs::lib::net::rtsp::client::video_codec_type_t::hevc)
 			{
 				int32_t saved_vps_size = 0;
 				int32_t saved_sps_size = 0;
@@ -167,7 +167,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 				unsigned char * saved_sps = _front->get_sps(saved_sps_size);
 				unsigned char * saved_pps = _front->get_pps(saved_pps_size);
 
-				bool is_vps = magnetar::lib::net::rtsp::client::is_vps((data[4] >> 1) & 0x3F);
+				bool is_vps = esmlabs::lib::net::rtsp::client::is_vps((data[4] >> 1) & 0x3F);
 				if (is_vps)
 				{
 					if (saved_vps_size < 1 || !saved_vps)
@@ -187,7 +187,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 					}
 				}
 
-				bool is_sps = magnetar::lib::net::rtsp::client::is_sps(_vcodec, (data[4] >> 1) & 0x3F);
+				bool is_sps = esmlabs::lib::net::rtsp::client::is_sps(_vcodec, (data[4] >> 1) & 0x3F);
 				if (is_sps)
 				{
 					if (saved_sps_size < 1 || !saved_sps)
@@ -207,7 +207,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 					}
 				}
 
-				bool is_pps = magnetar::lib::net::rtsp::client::is_pps(_vcodec, (data[4] >> 1) & 0x3F);
+				bool is_pps = esmlabs::lib::net::rtsp::client::is_pps(_vcodec, (data[4] >> 1) & 0x3F);
 				if (is_pps)
 				{
 					if (saved_pps_size < 1 || !saved_pps)
@@ -227,7 +227,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 					}
 				}
 
-				bool is_idr = magnetar::lib::net::rtsp::client::is_idr(_vcodec, (data[4] >> 1) & 0x3F);
+				bool is_idr = esmlabs::lib::net::rtsp::client::is_idr(_vcodec, (data[4] >> 1) & 0x3F);
 				if (_change_vps || _change_sps || _change_pps)
 				{
 					if (is_idr && !_recv_first_idr)
@@ -259,9 +259,9 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 				}
 			}
 		}		
-		else if (_mt == magnetar::lib::net::rtsp::client::media_type_t::audio)
+		else if (_mt == esmlabs::lib::net::rtsp::client::media_type_t::audio)
 		{
-			if (_acodec == magnetar::lib::net::rtsp::client::audio_codec_type_t::aac)
+			if (_acodec == esmlabs::lib::net::rtsp::client::audio_codec_type_t::aac)
 			{
 				if (!_recv_first_audio)
 				{
@@ -281,13 +281,13 @@ void magnetar::lib::net::rtsp::client::buffer_sink::add_data(unsigned char * dat
 	}
 }
 
-void magnetar::lib::net::rtsp::client::buffer_sink::after_getting_frame(unsigned frame_size, unsigned truncated_bytes, struct timeval presentation_time, unsigned duration_msec)
+void esmlabs::lib::net::rtsp::client::buffer_sink::after_getting_frame(unsigned frame_size, unsigned truncated_bytes, struct timeval presentation_time, unsigned duration_msec)
 {
 	if (_front)
 	{
-		if (_mt == magnetar::lib::net::rtsp::client::media_type_t::video)
+		if (_mt == esmlabs::lib::net::rtsp::client::media_type_t::video)
 		{
-			if (_vcodec == magnetar::lib::net::rtsp::client::video_codec_type_t::avc)
+			if (_vcodec == esmlabs::lib::net::rtsp::client::video_codec_type_t::avc)
 			{
 				const unsigned char start_code[4] = { 0x00, 0x00, 0x00, 0x01 };
 				if ((_buffer[0] == start_code[0]) && (_buffer[1] == start_code[1]) && (_buffer[2] == start_code[2]) && (_buffer[3] == start_code[3]))
@@ -308,7 +308,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::after_getting_frame(unsigned
 					add_data(_buffer, frame_size + sizeof(start_code), presentation_time, duration_msec);
 				}
 			} 
-			else if (_vcodec == magnetar::lib::net::rtsp::client::video_codec_type_t::hevc)
+			else if (_vcodec == esmlabs::lib::net::rtsp::client::video_codec_type_t::hevc)
 			{
 				const unsigned char start_code[4] = { 0x00, 0x00, 0x00, 0x01 };
 				if ((_buffer[0] == start_code[0]) && (_buffer[1] == start_code[1]) && (_buffer[2] == start_code[2]) && (_buffer[3] == start_code[3]))
@@ -330,7 +330,7 @@ void magnetar::lib::net::rtsp::client::buffer_sink::after_getting_frame(unsigned
 				}
 			}
 		}
-		else if (_mt == magnetar::lib::net::rtsp::client::media_type_t::audio)
+		else if (_mt == esmlabs::lib::net::rtsp::client::media_type_t::audio)
 		{
 			add_data(_buffer, frame_size, presentation_time, duration_msec);
 		}

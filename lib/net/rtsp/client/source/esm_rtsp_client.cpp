@@ -1,4 +1,4 @@
-#include "mgnt_rtsp_client.h"
+#include "esm_rtsp_client.h"
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -12,20 +12,20 @@
 
 #define MIN(a,b) ((a) > (b) ? (b) : (a))
 
-magnetar::lib::net::rtsp::client::client(void)
+esmlabs::lib::net::rtsp::client::client(void)
 	: _ignore_sdp(true)
 	, _tid(-1)
 {
 }
 
-magnetar::lib::net::rtsp::client::~client(void)
+esmlabs::lib::net::rtsp::client::~client(void)
 {
 }
 
-int32_t magnetar::lib::net::rtsp::client::play(const char * url, const char * username, const char * password, int32_t transport_option, int32_t recv_option, int32_t recv_timeout, float scale, bool repeat)
+int32_t esmlabs::lib::net::rtsp::client::play(const char * url, const char * username, const char * password, int32_t transport_option, int32_t recv_option, int32_t recv_timeout, float scale, bool repeat)
 {
     if( !url || strlen(url)<1 )
-		return magnetar::lib::net::rtsp::client::err_code_t::generic_fail;
+		return esmlabs::lib::net::rtsp::client::err_code_t::generic_fail;
 
 	memset(_url, 0x00, sizeof(_url));
 	memset(_username, 0x00, sizeof(_username));
@@ -42,11 +42,11 @@ int32_t magnetar::lib::net::rtsp::client::play(const char * url, const char * us
 	_scale = scale;
 	_repeat = repeat;
 
-	_tid = pthread_create(&_thread, nullptr, magnetar::lib::net::rtsp::client::process_cb, (void*)this);
-	return magnetar::lib::net::rtsp::client::err_code_t::success;
+	_tid = pthread_create(&_thread, nullptr, esmlabs::lib::net::rtsp::client::process_cb, (void*)this);
+	return esmlabs::lib::net::rtsp::client::err_code_t::success;
 }
 
-int32_t magnetar::lib::net::rtsp::client::stop(void)
+int32_t esmlabs::lib::net::rtsp::client::stop(void)
 {
 	if (!_kill )
 	{
@@ -56,10 +56,10 @@ int32_t magnetar::lib::net::rtsp::client::stop(void)
 			_live->close();
 	}
 	pthread_join(_thread, nullptr);
-	return magnetar::lib::net::rtsp::client::err_code_t::success;
+	return esmlabs::lib::net::rtsp::client::err_code_t::success;
 }
 
-int32_t magnetar::lib::net::rtsp::client::pause(void)
+int32_t esmlabs::lib::net::rtsp::client::pause(void)
 {
 	if (!_kill)
 	{
@@ -68,42 +68,42 @@ int32_t magnetar::lib::net::rtsp::client::pause(void)
 			_live->start_pausing_session();
 		}
 	}
-	return magnetar::lib::net::rtsp::client::err_code_t::success;
+	return esmlabs::lib::net::rtsp::client::err_code_t::success;
 }
 
-uint8_t * magnetar::lib::net::rtsp::client::get_vps(int32_t & vps_size)
+uint8_t * esmlabs::lib::net::rtsp::client::get_vps(int32_t & vps_size)
 {
 	vps_size = _vps_size;
 	return _sps;
 }
 
-uint8_t * magnetar::lib::net::rtsp::client::get_sps(int32_t & sps_size)
+uint8_t * esmlabs::lib::net::rtsp::client::get_sps(int32_t & sps_size)
 {
 	sps_size = _sps_size;
 	return _sps;
 }
 
-uint8_t * magnetar::lib::net::rtsp::client::get_pps(int32_t & pps_size)
+uint8_t * esmlabs::lib::net::rtsp::client::get_pps(int32_t & pps_size)
 {
 	pps_size = _pps_size;
 	return _pps;
 }
 
-void magnetar::lib::net::rtsp::client::set_vps(uint8_t * vps, int32_t vps_size)
+void esmlabs::lib::net::rtsp::client::set_vps(uint8_t * vps, int32_t vps_size)
 {
 	::memset(_vps, 0x00, sizeof(_vps));
 	::memmove(_vps, vps, vps_size);
 	_vps_size = vps_size;
 }
 
-void magnetar::lib::net::rtsp::client::set_sps(uint8_t * sps, int32_t sps_size)
+void esmlabs::lib::net::rtsp::client::set_sps(uint8_t * sps, int32_t sps_size)
 {
 	::memset(_sps, 0x00, sizeof(_sps));
 	::memmove(_sps, sps, sps_size);
 	_sps_size = sps_size;
 }
 
-void magnetar::lib::net::rtsp::client::set_pps(uint8_t * pps, int32_t pps_size)
+void esmlabs::lib::net::rtsp::client::set_pps(uint8_t * pps, int32_t pps_size)
 {
 	::memset(_pps, 0x00, sizeof(_pps));
 	::memmove(_pps, pps, pps_size);
@@ -111,96 +111,96 @@ void magnetar::lib::net::rtsp::client::set_pps(uint8_t * pps, int32_t pps_size)
 }
 
 
-void magnetar::lib::net::rtsp::client::set_audio_extradata(uint8_t * extradata, int32_t size)
+void esmlabs::lib::net::rtsp::client::set_audio_extradata(uint8_t * extradata, int32_t size)
 {
 	::memset(_audio_extradata, 0x00, sizeof(_audio_extradata));
 	::memmove(_audio_extradata, extradata, size);
 	_audio_extradata_size = size;
 }
 
-uint8_t * magnetar::lib::net::rtsp::client::get_audio_extradata(int32_t & size)
+uint8_t * esmlabs::lib::net::rtsp::client::get_audio_extradata(int32_t & size)
 {
 	size = _audio_extradata_size;
 	return _audio_extradata;
 }
 
-void magnetar::lib::net::rtsp::client::set_audio_channels(int32_t channels)
+void esmlabs::lib::net::rtsp::client::set_audio_channels(int32_t channels)
 {
 	_audio_channels = channels;
 }
 
-int32_t	magnetar::lib::net::rtsp::client::get_audio_channels(void)
+int32_t	esmlabs::lib::net::rtsp::client::get_audio_channels(void)
 {
 	return _audio_channels;
 }
 
-void magnetar::lib::net::rtsp::client::set_audio_samplerate(int32_t samplerate)
+void esmlabs::lib::net::rtsp::client::set_audio_samplerate(int32_t samplerate)
 {
 	_audio_samplerate = samplerate;
 }
 
-int32_t magnetar::lib::net::rtsp::client::get_audio_samplerate(void)
+int32_t esmlabs::lib::net::rtsp::client::get_audio_samplerate(void)
 {
 	return _audio_samplerate;
 }
 
 /*
-bool magnetar::lib::net::rtsp::client::ignore_sdp(void)
+bool esmlabs::lib::net::rtsp::client::ignore_sdp(void)
 {
 	return _ignore_sdp;
 }
 */
 
-void magnetar::lib::net::rtsp::client::on_begin_video(int32_t smt, uint8_t * vps, int32_t vpssize, uint8_t * sps, int32_t spssize, uint8_t * pps, int32_t ppssize, const uint8_t * bytes, int32_t nbytes, long long pts)
+void esmlabs::lib::net::rtsp::client::on_begin_video(int32_t smt, uint8_t * vps, int32_t vpssize, uint8_t * sps, int32_t spssize, uint8_t * pps, int32_t ppssize, const uint8_t * bytes, int32_t nbytes, long long pts)
 {
 
 }
 
-void magnetar::lib::net::rtsp::client::on_recv_video(int32_t smt, const uint8_t * bytes, int32_t nbytes, long long pts)
+void esmlabs::lib::net::rtsp::client::on_recv_video(int32_t smt, const uint8_t * bytes, int32_t nbytes, long long pts)
 {
 
 }
 
-void magnetar::lib::net::rtsp::client::on_end_video(void)
+void esmlabs::lib::net::rtsp::client::on_end_video(void)
 {
 
 }
 
-void magnetar::lib::net::rtsp::client::on_begin_audio(int32_t smt, uint8_t * config, int32_t config_size, int32_t samplerate, int32_t channels, const uint8_t * bytes, int32_t nbytes, long long pts)
+void esmlabs::lib::net::rtsp::client::on_begin_audio(int32_t smt, uint8_t * config, int32_t config_size, int32_t samplerate, int32_t channels, const uint8_t * bytes, int32_t nbytes, long long pts)
 {
 
 }
 
-void magnetar::lib::net::rtsp::client::on_recv_audio(int32_t smt, const uint8_t * bytes, int32_t nbytes, long long pts)
+void esmlabs::lib::net::rtsp::client::on_recv_audio(int32_t smt, const uint8_t * bytes, int32_t nbytes, long long pts)
 {
 
 }
 
-void magnetar::lib::net::rtsp::client::on_end_audio(void)
+void esmlabs::lib::net::rtsp::client::on_end_audio(void)
 {
 
 }
 
-void * magnetar::lib::net::rtsp::client::process_cb(void * param)
+void * esmlabs::lib::net::rtsp::client::process_cb(void * param)
 {
-	magnetar::lib::net::rtsp::client * self = static_cast<magnetar::lib::net::rtsp::client*>(param);
+	esmlabs::lib::net::rtsp::client * self = static_cast<esmlabs::lib::net::rtsp::client*>(param);
 	self->process();
 	return 0;
 }
 
-void magnetar::lib::net::rtsp::client::process(void)
+void esmlabs::lib::net::rtsp::client::process(void)
 {
 	do
 	{
 		TaskScheduler * sched = BasicTaskScheduler::createNew();
 		UsageEnvironment * env = BasicUsageEnvironment::createNew(*sched);
 		if (strlen(_username) > 0 && strlen(_password) > 0)
-			_live = magnetar::lib::net::rtsp::client::core::createNew(this, *env, _url, _username, _password, _transport_option, _recv_option, _recv_timeout, _scale, 0, &_kill);
+			_live = esmlabs::lib::net::rtsp::client::core::createNew(this, *env, _url, _username, _password, _transport_option, _recv_option, _recv_timeout, _scale, 0, &_kill);
 		else
-			_live = magnetar::lib::net::rtsp::client::core::createNew(this, *env, _url, 0, 0, _transport_option, _recv_option, _recv_timeout, _scale, 0, &_kill);
+			_live = esmlabs::lib::net::rtsp::client::core::createNew(this, *env, _url, 0, 0, _transport_option, _recv_option, _recv_timeout, _scale, 0, &_kill);
 
 		_kill = false;
-		magnetar::lib::net::rtsp::client::core::continue_after_client_creation(_live);
+		esmlabs::lib::net::rtsp::client::core::continue_after_client_creation(_live);
 		env->taskScheduler().doEventLoop((char*)&_kill);
 
 		if (env)
@@ -224,44 +224,44 @@ void magnetar::lib::net::rtsp::client::process(void)
 	on_end_audio();
 }
 
-bool magnetar::lib::net::rtsp::client::is_vps(uint8_t nal_unit_type)
+bool esmlabs::lib::net::rtsp::client::is_vps(uint8_t nal_unit_type)
 {
 	return nal_unit_type == 32;
 }
 
-bool magnetar::lib::net::rtsp::client::is_sps(int32_t codec, uint8_t nal_unit_type)
+bool esmlabs::lib::net::rtsp::client::is_sps(int32_t codec, uint8_t nal_unit_type)
 {
-	if (codec == magnetar::lib::net::rtsp::client::video_codec_type_t::avc)
+	if (codec == esmlabs::lib::net::rtsp::client::video_codec_type_t::avc)
 		return nal_unit_type == 7;
 	else
 		return nal_unit_type == 33;
 }
 
-bool magnetar::lib::net::rtsp::client::is_pps(int32_t codec, uint8_t nal_unit_type)
+bool esmlabs::lib::net::rtsp::client::is_pps(int32_t codec, uint8_t nal_unit_type)
 {
-	if (codec == magnetar::lib::net::rtsp::client::video_codec_type_t::avc)
+	if (codec == esmlabs::lib::net::rtsp::client::video_codec_type_t::avc)
 		return nal_unit_type == 8;
 	else
 		return nal_unit_type == 34;
 }
 
-bool magnetar::lib::net::rtsp::client::is_idr(int32_t codec, uint8_t nal_unit_type)
+bool esmlabs::lib::net::rtsp::client::is_idr(int32_t codec, uint8_t nal_unit_type)
 {
-	if (codec == magnetar::lib::net::rtsp::client::video_codec_type_t::avc)
+	if (codec == esmlabs::lib::net::rtsp::client::video_codec_type_t::avc)
 		return nal_unit_type == 5;
 	else
 		return (nal_unit_type == 19) || (nal_unit_type == 20);
 }
 
-bool magnetar::lib::net::rtsp::client::is_vlc(int32_t codec, uint8_t nal_unit_type)
+bool esmlabs::lib::net::rtsp::client::is_vlc(int32_t codec, uint8_t nal_unit_type)
 {
-	if (codec == magnetar::lib::net::rtsp::client::video_codec_type_t::avc)
+	if (codec == esmlabs::lib::net::rtsp::client::video_codec_type_t::avc)
 		return (nal_unit_type <= 5 && nal_unit_type > 0);
 	else
 		return (nal_unit_type <= 31);
 }
 
-const int32_t magnetar::lib::net::rtsp::client::find_nal_unit(uint8_t * bitstream, int32_t size, int * nal_start, int * nal_end)
+const int32_t esmlabs::lib::net::rtsp::client::find_nal_unit(uint8_t * bitstream, int32_t size, int * nal_start, int * nal_end)
 {
 	uint32_t i;
 	// find start
@@ -312,7 +312,7 @@ const int32_t magnetar::lib::net::rtsp::client::find_nal_unit(uint8_t * bitstrea
 }
 
 
-const uint8_t * magnetar::lib::net::rtsp::client::find_start_code(const uint8_t * __restrict begin, const uint8_t * end, uint32_t * __restrict state)
+const uint8_t * esmlabs::lib::net::rtsp::client::find_start_code(const uint8_t * __restrict begin, const uint8_t * end, uint32_t * __restrict state)
 {
 	int i;
 	if (begin >= end)

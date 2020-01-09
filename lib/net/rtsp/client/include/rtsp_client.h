@@ -1,13 +1,13 @@
-#if !defined(_RTSP_CLIENT_H_)
+#ifndef _RTSP_CLIENT_H_
 #define _RTSP_CLIENT_H_
 
 #include <BasicUsageEnvironment.hh>
 #include <GroupsockHelper.hh>
 #include <liveMedia.hh>
 #include <signal.h>
-#include "mgnt_rtsp_client.h"
+#include "esm_rtsp_client.h"
 
-namespace magnetar
+namespace esmlabs
 {
 	namespace lib
 	{
@@ -18,7 +18,7 @@ namespace magnetar
 				class client::core : public RTSPClient
 				{
 				public:
-					static magnetar::lib::net::rtsp::client::core * createNew(magnetar::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag);
+					static esmlabs::lib::net::rtsp::client::core * createNew(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag);
 
 					static void continue_after_client_creation(RTSPClient * param);
 					static void continue_after_options(RTSPClient * param, int result_code, char * result_string);
@@ -32,7 +32,7 @@ namespace magnetar
 					void close(void);
 
 				protected:
-					core(magnetar::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag);
+					core(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag);
 					~core(void);
 
 				private:
@@ -71,7 +71,7 @@ namespace magnetar
 					bool * _kill_flag;
 					int	_kill_trigger;
 
-					magnetar::lib::net::rtsp::client * _front;
+					esmlabs::lib::net::rtsp::client * _front;
 					Authenticator * _auth;
 					MediaSession * _media_session;
 

@@ -1,6 +1,6 @@
-#include "ff_muxer_v4.2.1.h"
+#include "ff_muxer.h"
 
-magnetar::lib::container::ff::v4_2_1::muxer::core::core(magnetar::lib::container::ff::v4_2_1::muxer * front)
+esmlabs::lib::container::ff::muxer::core::core(esmlabs::lib::container::ff::muxer * front)
 	: _front(front)
 	, _context(nullptr)
 	, _is_initialized(false)
@@ -16,22 +16,22 @@ magnetar::lib::container::ff::v4_2_1::muxer::core::core(magnetar::lib::container
 	::pthread_mutex_init(&_lock, nullptr);
 }
 
-magnetar::lib::container::ff::v4_2_1::muxer::core::~core(void)
+esmlabs::lib::container::ff::muxer::core::~core(void)
 {
 	::pthread_mutex_destroy(&_lock);
 }
 
-bool magnetar::lib::container::ff::v4_2_1::muxer::core::is_initialized(void)
+bool esmlabs::lib::container::ff::muxer::core::is_initialized(void)
 {
 	return _is_initialized;
 }
 
-int32_t magnetar::lib::container::ff::v4_2_1::muxer::core::initialize(magnetar::lib::container::ff::v4_2_1::muxer::context_t * context)
+int32_t esmlabs::lib::container::ff::muxer::core::initialize(esmlabs::lib::container::ff::muxer::context_t * context)
 {
 	if (!(context->option & media_type_t::video) && !(context->option & media_type_t::audio))
-		return magnetar::lib::container::ff::v4_2_1::muxer::err_code_t::generic_fail;
+		return esmlabs::lib::container::ff::muxer::err_code_t::generic_fail;
 
-    magnetar::locks::autolock lock(&_lock);
+    esmlabs::locks::autolock lock(&_lock);
 
 	_context = context;
 	_frame_number = 0;
@@ -41,34 +41,34 @@ int32_t magnetar::lib::container::ff::v4_2_1::muxer::core::initialize(magnetar::
 	_start_time = -1;
 	_delayed_muxer_init = false;
 	_run = true;
-    ::pthread_create(&_thread, nullptr, magnetar::lib::container::ff::v4_2_1::muxer::core::process_cb, (void*)this);
+    ::pthread_create(&_thread, nullptr, esmlabs::lib::container::ff::muxer::core::process_cb, (void*)this);
 	_is_initialized = true;
-	return magnetar::lib::container::ff::v4_2_1::muxer::err_code_t::success;
+	return esmlabs::lib::container::ff::muxer::err_code_t::success;
 }
 
-int32_t magnetar::lib::container::ff::v4_2_1::muxer::core::release(void)
+int32_t esmlabs::lib::container::ff::muxer::core::release(void)
 {
-    magnetar::locks::autolock lock(&_lock);
+    esmlabs::locks::autolock lock(&_lock);
 
 	_is_initialized = false;
 	_run = false;
     ::pthread_join(_thread, nullptr);
 	_msg_queue.clear();
-	return magnetar::lib::container::ff::v4_2_1::muxer::err_code_t::success;
+	return esmlabs::lib::container::ff::muxer::err_code_t::success;
 }
 
-int32_t magnetar::lib::container::ff::v4_2_1::muxer::core::put_video_stream(uint8_t * bytes, int32_t nbytes, long long dts, long long cts)
+int32_t esmlabs::lib::container::ff::muxer::core::put_video_stream(uint8_t * bytes, int32_t nbytes, long long dts, long long cts)
 {
 	if (!bytes || nbytes < 1)
-		return magnetar::lib::container::ff::v4_2_1::muxer::err_code_t::success;
+		return esmlabs::lib::container::ff::muxer::err_code_t::success;
 
-    magnetar::locks::autolock lock(&_lock);        
+    esmlabs::locks::autolock lock(&_lock);        
 
 	std::shared_ptr<muxer::core::msg_t> msgQueueElem = std::shared_ptr<muxer::core::msg_t>(new muxer::core::msg_t);
 	msgQueueElem->msg_type = muxer::core::cmd_type_t::put_video;
 	
 	std::shared_ptr<muxer::core::queue_elem_t> videoQueueElem = std::shared_ptr<muxer::core::queue_elem_t>(new muxer::core::queue_elem_t(nbytes));
-	videoQueueElem->type = magnetar::lib::container::ff::v4_2_1::muxer::media_type_t::video;
+	videoQueueElem->type = esmlabs::lib::container::ff::muxer::media_type_t::video;
 	::memmove(videoQueueElem->data, bytes, nbytes);
 	videoQueueElem->size = nbytes;
 	videoQueueElem->dts = dts;
@@ -87,18 +87,18 @@ int32_t magnetar::lib::container::ff::v4_2_1::muxer::core::put_video_stream(uint
 	return muxer::err_code_t::success;
 }
 
-int32_t magnetar::lib::container::ff::v4_2_1::muxer::core::put_audio_stream(uint8_t * bytes, int32_t nbytes, long long dts, long long cts)
+int32_t esmlabs::lib::container::ff::muxer::core::put_audio_stream(uint8_t * bytes, int32_t nbytes, long long dts, long long cts)
 {
 	if (!bytes || nbytes < 1)
-		return magnetar::lib::container::ff::v4_2_1::muxer::err_code_t::success;
+		return esmlabs::lib::container::ff::muxer::err_code_t::success;
 
-    magnetar::locks::autolock lock(&_lock);    
+    esmlabs::locks::autolock lock(&_lock);    
 
 	std::shared_ptr<muxer::core::msg_t> msgQueueElem = std::shared_ptr<muxer::core::msg_t>(new muxer::core::msg_t);
 	msgQueueElem->msg_type = muxer::core::cmd_type_t::put_audio;
 
 	std::shared_ptr<muxer::core::queue_elem_t> audioQueueElem = std::shared_ptr<muxer::core::queue_elem_t>(new muxer::core::queue_elem_t(nbytes));
-	audioQueueElem->type = magnetar::lib::container::ff::v4_2_1::muxer::media_type_t::audio;
+	audioQueueElem->type = esmlabs::lib::container::ff::muxer::media_type_t::audio;
 	::memmove(audioQueueElem->data, bytes, nbytes);
 	audioQueueElem->size = nbytes;
 	audioQueueElem->dts = dts;
@@ -116,7 +116,7 @@ int32_t magnetar::lib::container::ff::v4_2_1::muxer::core::put_audio_stream(uint
 	return muxer::err_code_t::success;
 }
 
-void magnetar::lib::container::ff::v4_2_1::muxer::core::process(void)
+void esmlabs::lib::container::ff::muxer::core::process(void)
 {
 	int64_t start = -1;
 	std::shared_ptr<muxer::core::msg_t> msgQueueElem;
@@ -131,7 +131,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process(void)
 			{
 				std::shared_ptr<muxer::core::queue_elem_t> videoQueueElem = msgQueueElem->msg_elem;
 
-				if (_context->generation_rule == magnetar::lib::container::ff::v4_2_1::muxer::generation_rule_t::full)
+				if (_context->generation_rule == esmlabs::lib::container::ff::muxer::generation_rule_t::full)
 				{
 					if (_frame_number == 0)
 					{
@@ -144,7 +144,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process(void)
                         ::pthread_create(&_media_thread, nullptr, muxer::core::process_media_cb, tctx);
 					}
 				}
-				else if (_context->generation_rule == magnetar::lib::container::ff::v4_2_1::muxer::generation_rule_t::frame)
+				else if (_context->generation_rule == esmlabs::lib::container::ff::muxer::generation_rule_t::frame)
 				{
 					if ((_frame_number % (_context->generation_threshold - 1)) == 0)
 					{
@@ -164,7 +164,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process(void)
                         ::pthread_create(&_media_thread, nullptr, muxer::core::process_media_cb, tctx);
 					}
 				}
-				else if (_context->generation_rule == magnetar::lib::container::ff::v4_2_1::muxer::generation_rule_t::time)
+				else if (_context->generation_rule == esmlabs::lib::container::ff::muxer::generation_rule_t::time)
 				{
 					if (_frame_number == 0)
 					{
@@ -227,7 +227,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process(void)
 	_media_queue.clear();
 }
 
-void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char * path)
+void esmlabs::lib::container::ff::muxer::core::process_media(const char * path)
 {
 	AVFormatContext	*	format_ctx = nullptr;
 	AVOutputFormat *	format = nullptr;
@@ -300,11 +300,11 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char
 	{
 		while (_media_queue.try_pop(queueElem))
 		{
-			if (queueElem->type == magnetar::lib::container::ff::v4_2_1::muxer::media_type_t::video)
+			if (queueElem->type == esmlabs::lib::container::ff::muxer::media_type_t::video)
 			{
 				vbytes = queueElem->data;
 				nvbytes = queueElem->size;
-				if (_context->timestamp_mode == magnetar::lib::container::ff::v4_2_1::muxer::timestamp_mode_t::frame_count)
+				if (_context->timestamp_mode == esmlabs::lib::container::ff::muxer::timestamp_mode_t::frame_count)
 				{
 					bq.num = _context->video_fps_num;
 					bq.den = _context->video_fps_den;
@@ -312,7 +312,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char
 					vduration = ::av_rescale_q(1, bq, video_stream->time_base);
 					_video_count++;
 				}
-				else if(_context->timestamp_mode == magnetar::lib::container::ff::v4_2_1::muxer::timestamp_mode_t::recved_time)
+				else if(_context->timestamp_mode == esmlabs::lib::container::ff::muxer::timestamp_mode_t::recved_time)
 				{
 					bq.num = 1;
 					bq.den = 1000000;
@@ -320,7 +320,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char
 					vdts = vpts;
 					vduration = ::av_rescale_q(1, bq, video_stream->time_base);
 				}
-				else if (_context->timestamp_mode == magnetar::lib::container::ff::v4_2_1::muxer::timestamp_mode_t::passed_time)
+				else if (_context->timestamp_mode == esmlabs::lib::container::ff::muxer::timestamp_mode_t::passed_time)
 				{
 					vpts = ::av_rescale_q(queueElem->dts + queueElem->cts, AVRational{ _context->video_tb_num, _context->video_tb_den }, video_stream->time_base);
 					vdts = ::av_rescale_q(queueElem->dts, AVRational{ _context->video_tb_num, _context->video_tb_den }, video_stream->time_base);
@@ -339,12 +339,12 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char
 				::av_packet_unref(&pkt);
 
 			}
-			else if (queueElem->type == magnetar::lib::container::ff::v4_2_1::muxer::media_type_t::audio && (_context->option & magnetar::lib::container::ff::v4_2_1::muxer::media_type_t::audio))
+			else if (queueElem->type == esmlabs::lib::container::ff::muxer::media_type_t::audio && (_context->option & esmlabs::lib::container::ff::muxer::media_type_t::audio))
 			{
 				abytes = queueElem->data;
 				nabytes = queueElem->size;
 
-				if (_context->timestamp_mode == magnetar::lib::container::ff::v4_2_1::muxer::timestamp_mode_t::frame_count)
+				if (_context->timestamp_mode == esmlabs::lib::container::ff::muxer::timestamp_mode_t::frame_count)
 				{
 					bq.num = audio_stream->codecpar->frame_size * 10000;
 					bq.den = _context->audio_samplerate * 10000;
@@ -352,7 +352,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char
 					aduration = ::av_rescale_q(1, bq, audio_stream->time_base);
 					_audio_count++;
 				}
-				else if (_context->timestamp_mode == magnetar::lib::container::ff::v4_2_1::muxer::timestamp_mode_t::recved_time)
+				else if (_context->timestamp_mode == esmlabs::lib::container::ff::muxer::timestamp_mode_t::recved_time)
 				{
 					bq.num = 1;
 					bq.den = 1000000;
@@ -360,7 +360,7 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char
 					adts = apts;
 					aduration = ::av_rescale_q(1, bq, audio_stream->time_base);
 				}
-				else if (_context->timestamp_mode == magnetar::lib::container::ff::v4_2_1::muxer::timestamp_mode_t::passed_time)
+				else if (_context->timestamp_mode == esmlabs::lib::container::ff::muxer::timestamp_mode_t::passed_time)
 				{
 					apts = ::av_rescale_q(queueElem->dts + queueElem->cts, AVRational{ _context->audio_tb_num, _context->audio_tb_den }, audio_stream->time_base);
 					adts = ::av_rescale_q(queueElem->dts, AVRational{ _context->audio_tb_num, _context->audio_tb_den }, audio_stream->time_base);
@@ -387,16 +387,16 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::process_media(const char
 	::av_free(stream_mapping);
 }
 
-void magnetar::lib::container::ff::v4_2_1::muxer::core::fill_video_stream(AVStream * vs, int32_t id)
+void esmlabs::lib::container::ff::muxer::core::fill_video_stream(AVStream * vs, int32_t id)
 {
 	vs->id = id;
 	vs->codecpar->codec_type = AVMEDIA_TYPE_VIDEO;
 	switch (_context->video_codec)
 	{
-	case magnetar::lib::container::ff::v4_2_1::muxer::video_codec_type_t::avc:
+	case esmlabs::lib::container::ff::muxer::video_codec_type_t::avc:
 		vs->codecpar->codec_id = AV_CODEC_ID_H264;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::video_codec_type_t::hevc:
+	case esmlabs::lib::container::ff::muxer::video_codec_type_t::hevc:
 		vs->codecpar->codec_id = AV_CODEC_ID_HEVC;
 		break;
 	}
@@ -413,22 +413,22 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::fill_video_stream(AVStre
 	vs->codecpar->codec_tag = 0;
 }
 
-void magnetar::lib::container::ff::v4_2_1::muxer::core::fill_audio_stream(AVStream * as, int32_t id)
+void esmlabs::lib::container::ff::muxer::core::fill_audio_stream(AVStream * as, int32_t id)
 {
 	as->id = id;
 	as->codecpar->codec_type = AVMEDIA_TYPE_AUDIO;
 	switch (_context->audio_codec)
 	{
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_codec_type_t::aac:
+	case esmlabs::lib::container::ff::muxer::audio_codec_type_t::aac:
 		as->codecpar->codec_id = AV_CODEC_ID_AAC;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_codec_type_t::ac3:
+	case esmlabs::lib::container::ff::muxer::audio_codec_type_t::ac3:
 		as->codecpar->codec_id = AV_CODEC_ID_AC3;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_codec_type_t::mp3:
+	case esmlabs::lib::container::ff::muxer::audio_codec_type_t::mp3:
 		as->codecpar->codec_id = AV_CODEC_ID_MP3;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_codec_type_t::opus:
+	case esmlabs::lib::container::ff::muxer::audio_codec_type_t::opus:
 		as->codecpar->codec_id = AV_CODEC_ID_OPUS;
 		break;
 	}
@@ -444,51 +444,51 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::fill_audio_stream(AVStre
 
 	switch (_context->audio_sampleformat)
 	{
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_u8 :
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_u8 :
 		as->codecpar->format = AV_SAMPLE_FMT_U8;
 		as->codecpar->bits_per_coded_sample = 8;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_s16:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_s16:
 		as->codecpar->format = AV_SAMPLE_FMT_S16;
 		as->codecpar->bits_per_coded_sample = 16;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_s32:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_s32:
 		as->codecpar->format = AV_SAMPLE_FMT_S32;
 		as->codecpar->bits_per_coded_sample = 32;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_flt:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_flt:
 		as->codecpar->format = AV_SAMPLE_FMT_FLT;
 		as->codecpar->bits_per_coded_sample = 32;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_dbl:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_dbl:
 		as->codecpar->format = AV_SAMPLE_FMT_DBL;
 		as->codecpar->bits_per_coded_sample = 64;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_s64:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_s64:
 		as->codecpar->format = AV_SAMPLE_FMT_S64;
 		as->codecpar->bits_per_coded_sample = 64;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_u8p:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_u8p:
 		as->codecpar->format = AV_SAMPLE_FMT_U8P;
 		as->codecpar->bits_per_coded_sample = 8;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_s16p:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_s16p:
 		as->codecpar->format = AV_SAMPLE_FMT_S16P;
 		as->codecpar->bits_per_coded_sample = 16;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_s32p:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_s32p:
 		as->codecpar->format = AV_SAMPLE_FMT_S32P;
 		as->codecpar->bits_per_coded_sample = 32;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_fltp:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_fltp:
 		as->codecpar->format = AV_SAMPLE_FMT_FLTP;
 		as->codecpar->bits_per_coded_sample = 16;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_dblp:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_dblp:
 		as->codecpar->format = AV_SAMPLE_FMT_DBLP;
 		as->codecpar->bits_per_coded_sample = 64;
 		break;
-	case magnetar::lib::container::ff::v4_2_1::muxer::audio_sample_format_t::fmt_s64p:
+	case esmlabs::lib::container::ff::muxer::audio_sample_format_t::fmt_s64p:
 		as->codecpar->format = AV_SAMPLE_FMT_S64P;
 		as->codecpar->bits_per_coded_sample = 64;
 		break;
@@ -498,14 +498,14 @@ void magnetar::lib::container::ff::v4_2_1::muxer::core::fill_audio_stream(AVStre
 	as->codecpar->codec_tag = 0;
 }
 
-void * magnetar::lib::container::ff::v4_2_1::muxer::core::process_cb(void * param)
+void * esmlabs::lib::container::ff::muxer::core::process_cb(void * param)
 {
 	muxer::core * self = static_cast<muxer::core*>(param);
 	self->process();
 	return 0;
 }
 
-void * magnetar::lib::container::ff::v4_2_1::muxer::core::process_media_cb(void * param)
+void * esmlabs::lib::container::ff::muxer::core::process_media_cb(void * param)
 {
 	muxer::core::media_thread_context_t * tc = static_cast<muxer::core::media_thread_context_t*>(param);
 	if (tc && tc->parent)

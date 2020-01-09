@@ -1,5 +1,5 @@
-#if !defined(_MAGNETAR_H_)
-#define _MAGNETAR_H_
+#ifndef _ESMLABS_H_
+#define _ESMLABS_H_
 
 #include <cstdlib>
 #include <cstdio>
@@ -9,7 +9,7 @@
 #include <string.h>
 #include <pthread.h>
 
-namespace magnetar 
+namespace esmlabs 
 {
     class base
     {

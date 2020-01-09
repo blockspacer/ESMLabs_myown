@@ -1,16 +1,15 @@
-#if !defined(_MAGNETAR_RTSP_CLIENT_H_)
-#define _MAGNETAR_RTSP_CLIENT_H_
+#ifndef _ESM_RTSP_CLIENT_H_
+#define _ESM_RTSP_CLIENT_H_
 
-#if defined(MGNTRTSPClient_EXPORTS)
-#define EXP_MAGNETAR_RTSP_CLIENT_CLASS __attribute__((__visibility__("default")))
+#if defined(ESMRTSPClient_EXPORTS)
+#define EXP_ESM_RTSP_CLIENT_CLASS __attribute__((__visibility__("default")))
 #else
-#define EXP_MAGNETAR_RTSP_CLIENT_CLASS
+#define EXP_ESM_RTSP_CLIENT_CLASS
 #endif
 
-#include <mgnt.h>
-#include <pthread.h>
+#include <esm.h>
 
-namespace magnetar
+namespace esmlabs
 {
 	namespace lib
 	{
@@ -18,8 +17,8 @@ namespace magnetar
 		{
 			namespace rtsp
 			{
-				class EXP_MAGNETAR_RTSP_CLIENT_CLASS client
-					: public magnetar::base
+				class EXP_ESM_RTSP_CLIENT_CLASS client
+					: public esmlabs::base
 				{
 				public:
 					class core;
@@ -90,7 +89,7 @@ namespace magnetar
 					float	_scale;
 					bool  	_repeat;
 
-					magnetar::lib::net::rtsp::client::core * _live;
+					esmlabs::lib::net::rtsp::client::core * _live;
 					bool 	_kill;
 					bool  	_ignore_sdp;
 

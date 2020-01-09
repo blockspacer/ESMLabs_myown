@@ -2,7 +2,7 @@ link_directories(../../../../3rdparty/gperftools/lib)
 link_directories(../../../../3rdparty/openssl/lib)
 link_directories(../../../../3rdparty/live/lib)
 
-add_library(MGNTRTSPClient SHARED 
+add_library(ESMRTSPClient SHARED 
                     source/aac_buffer_sink.cpp
                     source/buffer_sink.cpp
                     source/h2645_buffer_sink.cpp
@@ -11,19 +11,19 @@ add_library(MGNTRTSPClient SHARED
                     source/rtsp_client.cpp
                     source/esm_rtsp_client.cpp)
 
-target_include_directories(MGNTRTSPClient PRIVATE 
+target_include_directories(ESMRTSPClient PRIVATE 
                             ../../../../3rdparty/gperftools/include 
                             ../../../../3rdparty/live/include
                             ../../../../base/include
                             include)
 
-set_target_properties(MGNTRTSPClient PROPERTIES
+set_target_properties(ESMRTSPClient PROPERTIES
                             LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/platform/linux/lib/${CMAKE_BUILD_TYPE})
     
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
 
-target_link_libraries(MGNTRTSPClient 
+target_link_libraries(ESMRTSPClient 
                         LINK_PRIVATE pthread
                         LINK_PRIVATE crypto
                         LINK_PRIVATE ssl
@@ -33,7 +33,7 @@ target_link_libraries(MGNTRTSPClient
                         LINK_PRIVATE UsageEnvironment_debug)
 else()
                         
-target_link_libraries(MGNTRTSPClient 
+target_link_libraries(ESMRTSPClient 
                         LINK_PRIVATE pthread
                         LINK_PRIVATE tcmalloc_minimal
                         LINK_PRIVATE crypto

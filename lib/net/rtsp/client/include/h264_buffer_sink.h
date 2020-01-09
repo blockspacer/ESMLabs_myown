@@ -2,9 +2,9 @@
 #define _H264_BUFFER_SINK_H_
 
 #include "h2645_buffer_sink.h"
-#include "mgnt_rtsp_client.h"
+#include "esm_rtsp_client.h"
 
-namespace magnetar
+namespace esmlabs
 {
 	namespace lib
 	{
@@ -13,13 +13,13 @@ namespace magnetar
 			namespace rtsp
 			{
 				class client::h264_buffer_sink
-					: public magnetar::lib::net::rtsp::client::h2645_buffer_sink
+					: public esmlabs::lib::net::rtsp::client::h2645_buffer_sink
 				{
 				public:
-					static magnetar::lib::net::rtsp::client::h264_buffer_sink * createNew(magnetar::lib::net::rtsp::client * front, UsageEnvironment & env, const char * sps, unsigned sps_size, const char * pps, unsigned pps_size, unsigned buffer_size = 100000);
+					static esmlabs::lib::net::rtsp::client::h264_buffer_sink * createNew(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * sps, unsigned sps_size, const char * pps, unsigned pps_size, unsigned buffer_size = 100000);
 
 				protected:
-					h264_buffer_sink(magnetar::lib::net::rtsp::client * front, UsageEnvironment & env, const char * sps, unsigned sps_size, const char * pps, unsigned pps_size, unsigned buffer_size);
+					h264_buffer_sink(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * sps, unsigned sps_size, const char * pps, unsigned pps_size, unsigned buffer_size);
 					virtual ~h264_buffer_sink(void);
 				};
 			};
