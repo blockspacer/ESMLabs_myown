@@ -14,12 +14,14 @@ sudo apt-get install build-essential
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 sudo apt-get update
 sudo apt install clang-6.0 lld-6.0 
+
+sudo apt-get install xorg-dev libglu1-mesa-dev
 echo "##################### END INSTALL BUILD ESSENTIAL #####################"
 
 echo "##################### BEGIN INSTALL CUDA... #####################"
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin --no-check-certificate
 sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
-wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1804-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1804-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb --no-check-certificate
 sudo dpkg -i cuda-repo-ubuntu1804-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
 sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
 sudo apt-get update
@@ -30,7 +32,7 @@ echo "##################### END INSTALL CUDA #####################"
 echo "##################### BEGIN BUILD OPENSSL-1.1.1D... #####################"
 mkdir -p ../3rdparty/openssl/include
 mkdir -p ../3rdparty/openssl/lib
-wget https://www.openssl.org/source/openssl-1.1.1d.tar.gz
+wget https://www.openssl.org/source/openssl-1.1.1d.tar.gz --no-check-certificate
 chmod +x ./openssl-1.1.1d.tar.gz
 tar -xzvf ./openssl-1.1.1d.tar.gz
 cd openssl-1.1.1d
@@ -47,7 +49,7 @@ echo "##################### END BUILD OPENSSL-1.1.1D #####################"
 echo "##################### BEGIN BUILD LIVE555... #####################"
 mkdir -p ../3rdparty/live/include
 mkdir -p ../3rdparty/live/lib
-wget http://live555.com/liveMedia/public/live555-latest.tar.gz
+wget http://live555.com/liveMedia/public/live555-latest.tar.gz --no-check-certificate
 chmod +x ./live555-latest.tar.gz
 tar -xzvf ./live555-latest.tar.gz
 cd live
@@ -76,7 +78,7 @@ echo "##################### END BUILD LIVE555 #####################"
 echo "##################### BEGIN BUILD GPERFTOOLS-2.7... #####################"
 mkdir -p ../3rdparty/gperftools/include
 mkdir -p ../3rdparty/gperftools/lib
-wget https://github.com/gperftools/gperftools/archive/gperftools-2.7.tar.gz
+wget https://github.com/gperftools/gperftools/archive/gperftools-2.7.tar.gz --no-check-certificate
 chmod +x ./gperftools-2.7.tar.gz
 tar -xzvf ./gperftools-2.7.tar.gz
 cd gperftools-gperftools-2.7
@@ -91,7 +93,7 @@ echo "##################### END BUILD GPERFTOOLS-2.7 #####################"
 
 echo "##################### BEGIN BUILD BOOST 1.72.0... #####################"
 mkdir -p ../3rdparty/boost
-wget https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
+wget https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz --no-check-certificate
 chmod +x ./boost_1_72_0.tar.gz
 tar -xzvf ./boost_1_72_0.tar.gz
 cd boost_1_72_0
@@ -105,7 +107,7 @@ echo "##################### END BUILD BOOST 1.72.0 #####################"
 
 echo "##################### BEGIN BUILD FFMPEG 4.2.1... #####################"
 mkdir -p ../3rdparty/ffmpeg
-wget https://ffmpeg.org/releases/ffmpeg-4.2.1.tar.bz2
+wget https://ffmpeg.org/releases/ffmpeg-4.2.1.tar.bz2 --no-check-certificate
 chmod +x ./ffmpeg-4.2.1.tar.bz2
 tar -xvjf ./ffmpeg-4.2.1.tar.bz2
 cd ffmpeg-4.2.1
@@ -129,12 +131,12 @@ echo "##################### END BUILD FFMPEG 4.2.1 #####################"
 echo "##################### BEGIN BUILD TBB 2020... #####################"
 mkdir -p ../3rdparty/tbb/include
 mkdir -p ../3rdparty/tbb/lib
-wget https://github.com/intel/tbb/archive/v2020.0.tar.gz
+wget https://github.com/intel/tbb/archive/v2020.0.tar.gz --no-check-certificate
 chmod +x ./v2020.0.tar.gz
 tar -xzvf ./v2020.0.tar.gz
 cd tbb-2020.0
 make compiler=clang arch=intel64
-cd ./build/linux_intel64_clang_cc7.4.0_libc2.27_kernel4.15.0_release/
+cd ./build/linux_intel64_clang_*/
 cp *.so* *.def $WORKING_DIR/../3rdparty/tbb/lib
 cp -rf ../../include/serial ../../include/tbb $WORKING_DIR/../3rdparty/tbb/include
 cd $WORKING_DIR
@@ -144,9 +146,9 @@ echo "##################### END BUILD TBB #####################"
 
 echo "##################### BEGIN BUILD OPENCV 4.1.2... #####################"
 mkdir -p ../3rdparty/opencv
-wget https://github.com/opencv/opencv/archive/4.1.2.zip
+wget https://github.com/opencv/opencv/archive/4.1.2.zip --no-check-certificate
 mv 4.1.2.zip opencv-4.1.2.zip
-wget https://github.com/opencv/opencv_contrib/archive/4.1.2.zip
+wget https://github.com/opencv/opencv_contrib/archive/4.1.2.zip --no-check-certificate
 mv 4.1.2.zip opencv_contrib-4.1.2.zip
 chmod +x ./opencv-4.1.2.zip
 chmod +x ./opencv_contrib-4.1.2.zip
