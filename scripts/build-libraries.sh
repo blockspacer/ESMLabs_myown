@@ -13,9 +13,18 @@ sudo apt-get install build-essential
 
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 sudo apt-get update
-sudo apt install clang-6.0 lld-6.0 
-
+sudo apt install llvm
+sudo apt install clang-6.0 lld-6.0 lldb-6.0
+sudo ln -s $LLVM_TOOLCHAIN/clang++ /usr/bin/clang++
+sudo ln -s $LLVM_TOOLCHAIN/clang /usr/bin/clang
+sudo ln -s $LLVM_TOOLCHAIN/lldb /usr/bin/lldb
+sudo ln -s $LLVM_TOOLCHAIN/lld /usr/bin/lld
 sudo apt-get install xorg-dev libglu1-mesa-dev
+sudo apt-get install cmake
+sudo apt-get install python-dev
+sudo apt-get install python3-dev
+sudo apt-get install yasm
+sudo apt-get install nasm
 echo "##################### END INSTALL BUILD ESSENTIAL #####################"
 
 echo "##################### BEGIN INSTALL CUDA... #####################"
