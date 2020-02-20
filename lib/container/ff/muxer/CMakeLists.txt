@@ -1,18 +1,18 @@
-link_directories(../../../../../3rdparty/gperftools/lib)
-link_directories(../../../../../3rdparty/tbb/lib)
-link_directories(../../../../../3rdparty/boost/lib)
-link_directories(../../../../../3rdparty/ffmpeg/lib)
+link_directories(../../../../3rdparty/gperftools/lib)
+link_directories(../../../../3rdparty/tbb/lib)
+link_directories(../../../../3rdparty/boost/lib)
+link_directories(../../../../3rdparty/ffmpeg/lib)
 
 add_library(ESMFFMuxer SHARED 
                     source/ff_muxer.cpp
                     source/esm_ff_muxer.cpp)
 
 target_include_directories(ESMFFMuxer PRIVATE 
-                            ../../../../../3rdparty/gperftools/include
-                            ../../../../../3rdparty/tbb/include 
-                            ../../../../../3rdparty/boost/include
-                            ../../../../../3rdparty/ffmpeg/include
-                            ../../../../../base/include
+                            ../../../../3rdparty/gperftools/include
+                            ../../../../3rdparty/tbb/include 
+                            ../../../../3rdparty/boost/include
+                            ../../../../3rdparty/ffmpeg/include
+                            ../../../../base/include
                             include)
 
 set_target_properties(ESMFFMuxer PROPERTIES

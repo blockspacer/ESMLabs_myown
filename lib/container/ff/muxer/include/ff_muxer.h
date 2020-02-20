@@ -94,7 +94,7 @@ namespace esmlabs
                         esmlabs::lib::container::ff::muxer::core * parent;
                     } media_thread_context_t;
 
-                    core(esmlabs::lib::container::ff::muxer * front);
+                    explicit core(esmlabs::lib::container::ff::muxer * front);
                     ~core(void);                    
 
                     bool	is_initialized(void);

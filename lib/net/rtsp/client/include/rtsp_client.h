@@ -32,13 +32,10 @@ namespace esmlabs
 					void close(void);
 
 				protected:
-					core(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag);
+					explicit core(esmlabs::lib::net::rtsp::client * front, UsageEnvironment & env, const char * url, const char * username, const char * password, int transport_option, int recv_option, int recv_timeout, float scale, unsigned int http_port_number, bool * kill_flag);
 					~core(void);
 
 				private:
-
-
-
 					//Medium * create_client( UsageEnvironment & env, const char * url, unsigned int http_port, const char * app_name );
 					//void assign_client( Medium * client );
 					void get_options(RTSPClient::responseHandler * after_func);

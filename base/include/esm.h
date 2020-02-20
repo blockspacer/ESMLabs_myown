@@ -4,9 +4,16 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstdint>
+#include <climits>
 #include <memory>
 #include <string>
 #include <string.h>
+#include <algorithm>
+#include <iostream>
+#include <mutex>
+#include <queue>
+#include <string>
+#include <thread>
 #include <pthread.h>
 
 namespace esmlabs 

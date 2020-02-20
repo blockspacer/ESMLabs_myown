@@ -35,8 +35,9 @@ namespace esmlabs
 						static const int32_t rtp_over_http = 2;
 					} transport_option_t;
 
-					client(void);
+					explicit client(void);
 					virtual ~client(void);
+					
 					int32_t play(const char * url, const char * username, const char * password, int32_t transport_option, int32_t recv_option, int32_t recv_timeout, float scale = 1.f, bool repeat = true);
 					int32_t stop(void);
 					int32_t pause(void);

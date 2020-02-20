@@ -98,7 +98,7 @@ namespace esmlabs
                         }
                     } context_t;
 
-                    muxer(void);
+                    explicit muxer(void);
                     virtual ~muxer(void);
 
                     bool    is_initialized(void);

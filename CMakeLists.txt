@@ -13,5 +13,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
 
 add_subdirectory(lib/container/ff/muxer)
 add_subdirectory(lib/net/rtsp/client)
+add_subdirectory(lib/net/rtc/client)
 add_subdirectory(apps/eval/nvr)
 
