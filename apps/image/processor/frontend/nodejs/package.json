@@ -1,0 +1,11 @@
+{
+  "name": "esmip",
+  "version": "1.0.0",
+  "description": "ESM Image Processor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tkhan",
+  "license": "ISC"
+}
